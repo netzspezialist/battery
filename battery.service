@@ -1,0 +1,14 @@
+[Unit]
+Description=Battery services
+After=network.target
+
+[Service]
+User=hildinger
+Type=simple
+Restart=always
+RestartSec=60
+ExecStart=python3 /home/hildinger/energy/battery/service_host.py
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
