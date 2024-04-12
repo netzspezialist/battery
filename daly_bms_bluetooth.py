@@ -187,8 +187,9 @@ class DalyBMSBluetooth(DalyBMS):
 
     async def get_cell_voltages(self, response_data=None):
         # required to get the number of cells
-        #if not self.status:
-        #    await self.get_status()
+        if not self.status:
+            self.status = await self.get_status()
+            self.logger.info(f'status result: {self.status}')
 
         max_responses = 6 # self._calc_num_responses(status_field="cell_voltages")
         #if not max_responses:
