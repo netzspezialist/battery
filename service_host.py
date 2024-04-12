@@ -18,7 +18,7 @@ if __name__ == '__main__':
     if not os.path.exists(logPath):
         os.makedirs(logPath)
 
-    fileHandler = TimedRotatingFileHandler('{logPath}/battery.log', when='midnight', backupCount=7)
+    fileHandler = TimedRotatingFileHandler(f'{logPath}/battery.log', when='midnight', backupCount=7)
     fileHandler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)8s | %(message)s'))
     logger.addHandler(fileHandler)
 
