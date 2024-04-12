@@ -1,5 +1,6 @@
 import config
 from daly_bms_bluetooth import DalyBMSBluetooth
+from bluetooth_auto_recovery import recover_adapter
 
 class DalyBluetoothConnection:
 
@@ -57,3 +58,6 @@ class DalyBluetoothConnection:
     async def disconnect(self):
         if self.bt_bms.is_connected:
             await self.bt_bms.disconnect()
+
+    async def recover_bluetooth(self):
+        await recover_adapter(0, self.mac_address)

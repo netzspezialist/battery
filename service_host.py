@@ -1,7 +1,9 @@
 import asyncio
 import sys
 import logging
+import os
 
+from os.path import dirname, abspath
 from logging.handlers import TimedRotatingFileHandler
 from battery_service import BatteryService
 
@@ -10,7 +12,13 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
-    fileHandler = TimedRotatingFileHandler('/home/hildinger/energy/battery/log/battery.log', when='midnight', backupCount=7)
+    script_path = abspath(dirname(__file__))
+
+    logPath = f'{script_path}/log'
+    if not os.path.exists(logPath):
+        os.makedirs(logPath)
+
+    fileHandler = TimedRotatingFileHandler('{logPath}/battery.log', when='midnight', backupCount=7)
     fileHandler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)8s | %(message)s'))
     logger.addHandler(fileHandler)
 

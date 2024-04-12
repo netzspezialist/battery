@@ -1,16 +1,9 @@
 import asyncio
-import json
-import os
-import signal
-import sys
 import time
-import logging
 
 from datetime import datetime
-
 from daly_bluetooth_connection import DalyBluetoothConnection
 from config import minimumRequestDelaySeconds
-
 from battery_influx import BatteryInflux
 
 class BatteryService:
@@ -90,13 +83,19 @@ class BatteryService:
                 start = time.time()
                 
                 await asyncio.sleep(2)
+                exceptionCounter = 0
                     
             except Exception as e:
                 self.logger.error(f'Error in loop: {e}')
                 exceptionCounter = exceptionCounter + 1
                 await asyncio.sleep(10)
 
-                if exceptionCounter > 5:
+                if 'org.bluez.Error.InProgress' in str(e):
+                    self.logger.error('Bluetooth adapter stucks in error, trying to recover...')
+                    await self.bms.recover_bluetooth()
+                    await asyncio.sleep(60)
+
+                if exceptionCounter > 3:
                     self.logger.error('Too many exceptions, stopping service')  
                     raise SystemExit
             
