@@ -103,7 +103,7 @@ class BatteryService:
         self.logger.info('BMS work loop stopped')
 
     async def soc(self):
-        self.logger.info('Getting SOC...')
+        self.logger.debug('Getting SOC...')
         startTime = datetime.now()
         result = await self.bms.get_soc()
         stopTime = datetime.now()
