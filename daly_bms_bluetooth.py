@@ -53,10 +53,14 @@ class DalyBMSBluetooth(DalyBMS):
         connected = await self.client.connect()
         self.logger.info(f"Bluetooth connected: [{connected}]")
 
+        await asyncio.sleep(0.1)
+
         """
         15
         """
         await self.client.start_notify('0000fff1-0000-1000-8000-00805f9b34fb', self._notification_callback)  
+        
+        await asyncio.sleep(0.1)
         
         return connected
         """

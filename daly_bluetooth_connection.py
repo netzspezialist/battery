@@ -60,4 +60,4 @@ class DalyBluetoothConnection:
             await self.bt_bms.disconnect()
 
     async def recover_bluetooth(self):
-        await recover_adapter(0, self.mac_address)
+        await recover_adapter(0, "08:BE:AC:41:58:4B")

@@ -90,12 +90,12 @@ class BatteryService:
                 exceptionCounter = exceptionCounter + 1
                 await asyncio.sleep(10)
 
-                if 'org.bluez.Error.InProgress' in str(e):
+                if exceptionCounter > 2:
                     self.logger.error('Bluetooth adapter stucks in error, trying to recover...')
                     await self.bms.recover_bluetooth()
-                    await asyncio.sleep(60)
+                    await asyncio.sleep(30)
 
-                if exceptionCounter > 3:
+                if exceptionCounter > 5:
                     self.logger.error('Too many exceptions, stopping service')  
                     raise SystemExit
             
