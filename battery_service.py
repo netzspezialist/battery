@@ -86,7 +86,7 @@ class BatteryService:
                 exceptionCounter = 0
                     
             except Exception as e:
-                self.logger.error(f'Error in loop: {e}')
+                self.logger.exception('Error in loop')
                 exceptionCounter = exceptionCounter + 1
                 await asyncio.sleep(10)
 
