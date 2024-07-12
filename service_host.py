@@ -10,7 +10,7 @@ from battery_service import BatteryService
 if __name__ == '__main__':
 
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     script_path = abspath(dirname(__file__))
 
