@@ -7,6 +7,9 @@ User=hildinger
 Type=simple
 Restart=always
 RestartSec=60
+WorkingDirectory=/home/hildinger/energy/battery/
+VIRTUAL_ENV=/home/hildinger/energy/battery/venv
+Environment=PATH=$VIRTUAL_ENV/bin:$PATH
 ExecStart=python3 /home/hildinger/energy/battery/service_host.py
 KillSignal=SIGINT
 
