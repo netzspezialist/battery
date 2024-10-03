@@ -1,3 +1,4 @@
+import aiohttp
 import asyncio
 import time
 
@@ -5,6 +6,7 @@ from datetime import datetime
 from daly_bluetooth_connection import DalyBluetoothConnection
 from config import minimumRequestDelaySeconds
 from battery_influx import BatteryInflux
+from battery_mqtt import BatteryMqtt
 
 class BatteryService:
     #FIFO = '/tmp/bms_service_pipe'
@@ -14,6 +16,7 @@ class BatteryService:
 
         self.bms = DalyBluetoothConnection(self.logger)
         self.influx = BatteryInflux(self.logger)
+        self.mqtt = BatteryMqtt(self.logger)
 
         #if not os.path.exists(BMS_Service.FIFO):
         #    os.mkfifo(BMS_Service.FIFO)
@@ -24,11 +27,13 @@ class BatteryService:
     async def start(self):
         self.logger.info('Starting bms service...')
         self.serviceRunning = True
+        self.mqtt.connect()
         await self.loop()
-
-    def stop(self):
+        
+    def stop(self):        
         self.logger.info('Stopping bms service...')
         self.serviceRunning = False
+        self.mqtt.disconnect()
         #if os.path.exists(BMS_Service.FIFO):
         #    os.close(self.fifo)
         #    os.remove(BMS_Service.FIFO)
@@ -49,8 +54,9 @@ class BatteryService:
         elapsedSecondsCellVoltageRange = 0
         elapsedSecondsTemperature = 0
         elapsedSecondsCellVoltages = 0
-        exceptionCounter = 0
-        while self.serviceRunning:            
+        exceptionCounter = 0      
+        
+        while self.serviceRunning:
             try:                
                 # soc
                 elapsedSecondsSoc = elapsedSecondsSoc + elapsedSeconds
@@ -102,6 +108,19 @@ class BatteryService:
 
         self.logger.info('BMS work loop stopped')
 
+    async def updateInverterService(self, session):
+        try:
+            async with session.get('http://192.168.88.3:5000/api/bms') as response:
+                if response.status == 200:
+                    data = await response.json()
+                    # Process the data as needed
+                    self.logger.info(f'API response: {data}')
+                else:
+                    self.logger.error(f'Failed to call API: {response.status}')
+        except Exception as e:
+            self.logger.exception('Error calling API endpoint')
+
+
     async def soc(self):
         self.logger.debug('Getting SOC...')
         startTime = datetime.now()
@@ -119,6 +138,10 @@ class BatteryService:
         current = result['current']
 
         await self.influx.upload_soc(timestamp, soc, voltage, current)
+        await self.mqtt.publish_message('soc', f'{{"soc": {soc}, "voltage": {voltage}, "current": {current}}}')
+
+
+        return result
 
     async def cell_voltage_range(self):
         self.logger.debug('Getting cell voltage range...')
@@ -138,6 +161,8 @@ class BatteryService:
         lowest_cell = result['lowest_cell']
 
         await self.influx.upload_cell_voltage_range(timestamp, highest_voltage, highest_cell, lowest_voltage, lowest_cell)
+
+
 
     async def temperature(self):
         self.logger.debug('Getting temperature...')

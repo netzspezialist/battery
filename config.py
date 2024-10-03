@@ -9,8 +9,8 @@ mqtt = {
     "enabled": True,
     "broker_address": "localhost",
     "port": 1883,
-    "client_id": "inverter",
-    "topic": "inverter",
+    "client_id": "bms",
+    "topic": "bms",
     "username": "user",
     "password": "password"
 }
@@ -21,10 +21,10 @@ bms = {
 }
 minimumRequestDelaySeconds = {
     "soc": 60,
-    "cellVoltageRange": 30,
-    "temperature": 240,
+    "cellVoltageRange": 60,
+    "temperature": 120,
     "cellVoltages": 120,
-    "errors": 60,
-    "mosfet": 60,
+    "errors": 120,
+    "mosfet": 120,
     "cycles": 3600
 }
