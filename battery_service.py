@@ -137,7 +137,7 @@ class BatteryService:
         current = result['current']
 
         await self.influx.upload_soc(timestamp, soc, voltage, current)
-        await self.mqtt.publish_message('soc', f'{{"soc": {soc}, "voltage": {voltage}, "current": {current}}}')
+        self.mqtt.publish_message('soc', f'{{"soc": {soc}, "voltage": {voltage}, "current": {current}}}')
 
 
         return result
