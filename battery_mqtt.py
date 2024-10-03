@@ -14,6 +14,8 @@ class BatteryMqtt:
         self.topic = mqttConfig["topic"]
         self.enabled = mqttConfig["enabled"]
 
+        self.logger.info(f'Mqtt enabled: {self.enabled} topic: {self.topic}')
+
     def connect(self):
         if not self.enabled:
             return
