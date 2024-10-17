@@ -15,7 +15,7 @@ class BatteryService:
         self.logger = logger
 
         #self.bms = DalyBluetoothConnection(self.logger)
-        self.bms = DalyBMS(self.logger)
+        self.bms = DalyBMS(3, 4, self.logger)
         self.influx = BatteryInflux(self.logger)
         self.mqtt = BatteryMqtt(self.logger)
 
