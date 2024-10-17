@@ -3,6 +3,7 @@ import time
 
 from datetime import datetime
 from daly_bluetooth_connection import DalyBluetoothConnection
+from daly_bms import DalyBMS
 from config import minimumRequestDelaySeconds
 from battery_influx import BatteryInflux
 from battery_mqtt import BatteryMqtt
@@ -13,7 +14,8 @@ class BatteryService:
     def __init__(self, logger = None):
         self.logger = logger
 
-        self.bms = DalyBluetoothConnection(self.logger)
+        #self.bms = DalyBluetoothConnection(self.logger)
+        self.bms = DalyBMS(self.logger)
         self.influx = BatteryInflux(self.logger)
         self.mqtt = BatteryMqtt(self.logger)
 
@@ -25,6 +27,7 @@ class BatteryService:
 
     async def start(self):
         self.logger.info('Starting bms service...')
+        self.bms.connect("/dev/ttyUSB0")
         self.serviceRunning = True
         self.mqtt.connect()
         await self.loop()
@@ -33,6 +36,7 @@ class BatteryService:
         self.logger.info('Stopping bms service...')
         self.serviceRunning = False
         self.mqtt.disconnect()
+        self.bms.disconnect()
         #if os.path.exists(BMS_Service.FIFO):
         #    os.close(self.fifo)
         #    os.remove(BMS_Service.FIFO)
@@ -81,7 +85,7 @@ class BatteryService:
                     await self.cell_voltages()
                     elapsedSecondsCellVoltages = 0
 
-                await self.bms.disconnect()
+                #await self.bms.disconnect()
 
                 end = time.time()
                 elapsedSeconds = end - start
@@ -97,7 +101,7 @@ class BatteryService:
 
                 if exceptionCounter > 2:
                     self.logger.error('Bluetooth adapter stucks in error, trying to recover...')
-                    await self.bms.recover_bluetooth()
+                    #await self.bms.recover_bluetooth()
                     await asyncio.sleep(30)
 
                 if exceptionCounter > 5:
