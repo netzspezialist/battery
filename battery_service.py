@@ -100,7 +100,7 @@ class BatteryService:
                 await asyncio.sleep(10)
 
                 if exceptionCounter > 2:
-                    self.logger.error('Bluetooth adapter stucks in error, trying to recover...')
+                    self.logger.error('Many errors, wait 30 secs')
                     #await self.bms.recover_bluetooth()
                     await asyncio.sleep(30)
 
@@ -170,7 +170,7 @@ class BatteryService:
     async def temperature(self):
         self.logger.debug('Getting temperature...')
         startTime = datetime.now()
-        result = self.bms.get_temps()
+        result = self.bms.get_max_min_temperature()
         stopTime = datetime.now()
 
         self.logger.info(f'temperature result: {result}')
