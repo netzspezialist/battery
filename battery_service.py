@@ -127,7 +127,7 @@ class BatteryService:
     async def soc(self):
         self.logger.debug('Getting SOC...')
         startTime = datetime.now()
-        result = await self.bms.get_soc()
+        result = self.bms.get_soc()
         stopTime = datetime.now()
 
         self.logger.info(f'SOC result: {result}')
@@ -149,7 +149,7 @@ class BatteryService:
     async def cell_voltage_range(self):
         self.logger.debug('Getting cell voltage range...')
         startTime = datetime.now()
-        result = await self.bms.get_cell_voltage_range()
+        result = self.bms.get_cell_voltage_range()
         stopTime = datetime.now()
 
         self.logger.info(f'cell_voltage_range result: {result}')
@@ -170,7 +170,7 @@ class BatteryService:
     async def temperature(self):
         self.logger.debug('Getting temperature...')
         startTime = datetime.now()
-        result = await self.bms.get_temps()
+        result = self.bms.get_temps()
         stopTime = datetime.now()
 
         self.logger.info(f'temperature result: {result}')
@@ -186,7 +186,7 @@ class BatteryService:
     async def cell_voltages(self):
         self.logger.debug('Getting cell voltages...')
         startTime = datetime.now()
-        result = await self.bms.get_cell_voltages()        
+        result = self.bms.get_cell_voltages()        
         stopTime = datetime.now()
 
         self.logger.info(f'cell voltages result: {result}')
