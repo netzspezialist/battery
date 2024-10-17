@@ -170,7 +170,7 @@ class BatteryService:
     async def temperature(self):
         self.logger.debug('Getting temperature...')
         startTime = datetime.now()
-        result = self.bms.get_max_min_temperature()
+        result = self.bms.get_temperature_range()
         stopTime = datetime.now()
 
         self.logger.info(f'temperature result: {result}')
