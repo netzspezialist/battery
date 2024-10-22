@@ -1,4 +1,5 @@
 import asyncio
+import json
 import time
 
 from datetime import datetime
@@ -140,11 +141,26 @@ class BatteryService:
         voltage = result['total_voltage']
         current = result['current']
 
+        data =  {
+            "soc": soc,
+            "voltage": voltage,
+            "current": current,
+            "timestamp": timestamp.isoformat()[:-3]
+        }
+        jsonData = json.dumps(data, default=self.__serialize_datetime)
+
+        self.logger.info(f'Publishing soc: {jsonData}')
+
+        self.mqtt.publish_message('soc', jsonData)
+
         await self.influx.upload_soc(timestamp, soc, voltage, current)
-        self.mqtt.publish_message('soc', f'{{"soc": {soc}, "voltage": {voltage}, "current": {current}}}')
-
-
+ 
         return result
+    
+    def __serialize_datetime(obj): 
+        if isinstance(obj, datetime.datetime): 
+            return obj.isoformat() 
+        raise TypeError("Type not serializable") 
 
     async def cell_voltage_range(self):
         self.logger.debug('Getting cell voltage range...')
@@ -165,6 +181,18 @@ class BatteryService:
 
         await self.influx.upload_cell_voltage_range(timestamp, highest_voltage, highest_cell, lowest_voltage, lowest_cell)
 
+        data =  {
+            "highestVoltage": highest_voltage,
+            "highestCell": highest_cell,
+            "lowestVoltage": lowest_voltage,
+            "lowestCell": lowest_cell,
+            "timestamp": timestamp.isoformat()[:-3]
+        }
+        jsonData = json.dumps(data, default=self.__serialize_datetime)
+
+        self.logger.info(f'Publishing cellVoltageRange: {jsonData}')
+
+        self.mqtt.publish_message('cellVoltageRange', jsonData)
 
 
     async def temperature(self):

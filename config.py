@@ -21,7 +21,7 @@ bms = {
 }
 minimumRequestDelaySeconds = {
     "soc": 60,
-    "cellVoltageRange": 60,
+    "cellVoltageRange": 10,
     "temperature": 120,
     "cellVoltages": 120,
     "errors": 120,
